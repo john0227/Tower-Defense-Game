@@ -357,6 +357,11 @@ class Game:
             arc(250, 255, 50, 50, -HALF_PI, -HALF_PI + TWO_PI * self.wave_timer.time / (self.wave_interval * 1000), PIE)
             fill(190)
             ellipse(250, 255, 35, 35)
+            fill(0)
+            textAlign(CENTER)
+            textSize(20)
+            text(str(self.wave_interval - self.wave_timer.time // 1000), 250, 262.5)
+            textAlign(LEFT)
     def display_always(self):
         # Display this when game should not be running
         for r in range(len(self.path)):
@@ -389,6 +394,11 @@ class Game:
         ellipse(250, 255, 50, 50)
         fill(190)
         ellipse(250, 255, 35, 35)
+        fill(0)
+        textAlign(CENTER)
+        textSize(20)
+        text(str(self.wave_interval), 250, 262.5)
+        textAlign(LEFT)
     def display_scorebar(self):
         fill(204, 255, 255)
         rect(0, 0, 1500, 200)
