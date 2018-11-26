@@ -30,8 +30,11 @@ class Game:
     def __init__(self):
         self.score = 0
         self.highscore = 0
+        self.score_multiplier = 1
+        self.MAX_SCORE = 9999999
         self.wave = 0
         self.money = 100
+        self.money_multiplier = 1
         self.MAX_MONEY = 99999
         self.castleHP = 500
         self.totalHP = 500
@@ -57,8 +60,7 @@ class Game:
         self.enemies = []
         for t in self.towers:
             del self.towers[t]
-        self.towers = {}
-    
+        self.towers = {} 
     def at_rowcol(self, x, y):
         return int((y - 200) // 50), int(x // 50)
     def row_to_pos(self, r, c):
@@ -200,12 +202,18 @@ class Game:
             # After every 20 waves, increase total number of enemies generated
             self.max_enemies += 10
         if self.wave % 10 == 0:
-            # After every 10 waves, increase enemy health
+            # After every 10 waves, increase enemy health and score, money multiplier
             Enemy.difficulty_scale += self.wave / 10
+            self.score_multiplier += 0.3
+            self.money_multiplier += 0.2
     def start_wave(self):
         # if not self.enemies:
         if self.enemies:
+            # Rewward for starting waves early
             self.wave += 1
+            self.score_multiplier, self.money_multiplier = 1.5, 1.3
+        else:
+            self.score_multiplier, self.money_multiplier = 1, 1
         self.wave_interval = 10
         self.generate_enemies()
         self.wave_timer.reset()
@@ -237,10 +245,32 @@ class Game:
                     self.spawn_timer.reset()
                     self.spawn_rate = 1
                 elif self.wave_timer.time >= self.wave_interval * 1000:
+                    self.score_multiplier, self.money_multiplier = 1, 1
                     self.wave_interval = 10
                     self.generate_enemies()
                     self.wave_timer.reset()
                     self.spawn_timer.start_timer()
+            # Display Towers
+            for keyval in self.towers:
+                t = self.towers[keyval]
+                t.display()
+                t.target = self.select_target(t)
+                if t.target is not None and t.target.visible:
+                    if t.timer.time >= t.shootspd * 1000:
+                        # Shoot, reset timer, remove enemy health
+                        # If enemy is killed, collect loot and increase point
+                        t.shoot(t.target.x, t.target.y)
+                        t.target.hp -= t.dmg
+                        if t.is_splash:
+                            index = 0
+                            while index < self.spawn_rate and index < len(self.enemies):
+                            # Spawn enemies in a set interval (not all at once)
+                                e = self.enemies[index]
+                                if e != t.target and dist(e.x, e.y, t.target.x, t.target.y) - e.radius < t.radius:
+                                    e.hp -= t.dmg
+                                index += 1
+                if t.target is None or t.target.is_defeated() or not t.target.visible:
+                        t.target = None
             # Display enemies
             if self.enemies:
                 index = 0
@@ -249,11 +279,14 @@ class Game:
                     e = self.enemies[index]
                     if e.is_defeated():
                             # increase player's coins, score, highscore, etc
-                            madd = e.loot
+                            madd = int(round(e.loot * self.money_multiplier))
                             if self.money + madd > self.MAX_MONEY:
                                 madd = self.MAX_MONEY - self.money
                             self.money += madd
-                            self.score += e.radius
+                            sadd = int(round(e.radius * self.score_multiplier))
+                            if self.score + sadd > self.MAX_SCORE:
+                                sadd = self.MAX_SCORE - self.score
+                            self.score += sadd
                             self.highscore = self.score if self.score > self.highscore else self.highscore
                             self.enemies.pop(self.enemies.index(e))
                             del e
@@ -301,27 +334,6 @@ class Game:
                             self.enemies.pop(self.enemies.index(e))
                             del e
                     index += 1
-            # Display Towers
-            for keyval in self.towers:
-                t = self.towers[keyval]
-                t.display()
-                t.target = self.select_target(t)
-                if t.target is not None and t.target.visible:
-                    if t.timer.time >= t.shootspd * 1000:
-                        # Shoot, reset timer, remove enemy health
-                        # If enemy is killed, collect loot and increase point
-                        t.shoot(t.target.x, t.target.y)
-                        t.target.hp -= t.dmg
-                        if t.is_splash:
-                            index = 0
-                            while index < self.spawn_rate and index < len(self.enemies):
-                            # Spawn enemies in a set interval (not all at once)
-                                e = self.enemies[index]
-                                if e != t.target and dist(e.x, e.y, t.target.x, t.target.y) - e.radius < t.radius:
-                                    e.hp -= t.dmg
-                                index += 1
-                if t.target is None or t.target.is_defeated() or not t.target.visible:
-                        t.target = None
             if self.spawn_timer.time >= self.spawn_interval:
                     rate_inc = 3
                     if self.spawn_rate + rate_inc > len(self.enemies):
