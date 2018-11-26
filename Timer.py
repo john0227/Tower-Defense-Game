@@ -14,17 +14,17 @@ class Timer:
     @property
     def time(self):
         if self.__is_set and not self.__pause:
-            self.__time = (hour() * 3600000 + minute() * 60000 + second() * 1000 + millis()) - self.__start
+            self.__time = millis() - self.__start
         return self.__time
     @property
     def is_set(self):
         return self.__is_set
     
     def start_timer(self):
-        self.__start = hour() * 3600000 + minute() * 60000 + second() * 1000 + millis()
+        self.__start = millis()
         self.__is_set = True
     def pause_timer(self):
-        self.__time = (hour() * 3600000 + minute() * 60000 + second() * 1000 + millis()) - self.__start
+        self.__time = millis() - self.__start
         self.__pause = True
     def resume_timer(self):
         self.__pause = False
