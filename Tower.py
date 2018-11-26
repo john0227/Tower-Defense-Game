@@ -44,12 +44,8 @@ class Tower:
         self.projectiles.append(Projectile(self.x, self.y, self.x, self.y, x1, y1, self.projectile_color))
         self.timer.reset()
         self.timer.start_timer()
-    def distance(self, x1, y1, x2, y2):
-        return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
-    
     def upgrade(self):
         self = self.__init__(self.name, self.level + 1, self.x, self.y)
-    
     def show_info(self, x, y):
         # Change x, y position
         if y <= 475:
@@ -94,7 +90,7 @@ class Tower:
         self.draw_tower()
         for p in self.projectiles:
             p.display()
-            if self.distance(p.starting[0], p.starting[1], p.ending[0], p.ending[1]) <= self.distance(p.x, p.y, p.starting[0], p.starting[1]):
+            if dist(p.starting[0], p.starting[1], p.ending[0], p.ending[1]) <= dist(p.x, p.y, p.starting[0], p.starting[1]):
                 self.projectiles.pop(self.projectiles.index(p))
                 del p
     def draw_tower(self):
