@@ -174,10 +174,6 @@ class Game:
         elif self.wave == 7:
             self.enemies.extend([Enemy(2), Enemy(2), Enemy(2), Enemy(1), Enemy(1), Enemy(1), Enemy(4), Enemy(4),
                                  Enemy(3), Enemy(1), Enemy(3), Enemy(1), Enemy(2), Enemy(2), Enemy(5), Enemy(5)])
-        elif self.wave == 10:
-            self.enemies.extend([Enemy(7), Enemy(1), Enemy(1), Enemy(2), Enemy(1), Enemy(2), Enemy(2), Enemy(3), Enemy(3), Enemy(1), Enemy(3), Enemy(1), Enemy(3)])
-        elif self.wave == 20:
-            self.enemies.extend([Enemy(8), Enemy(8), Enemy(7), Enemy(7), Enemy(7)])
         else:
             enemy_num = int(1.5 * self.max_enemies) if self.wave % 10 == 0 else self.max_enemies
             for i in range(enemy_num):
@@ -209,7 +205,7 @@ class Game:
     def start_wave(self):
         # if not self.enemies:
         if self.enemies:
-            # Rewward for starting waves early
+            # Reward for starting waves early
             self.wave += 1
             self.score_multiplier, self.money_multiplier = 1.5, 1.3
         else:
