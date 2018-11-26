@@ -136,12 +136,12 @@ class Game:
             del self.towers[(r, c)]
             del t
     def select_target(self, tower):
-        if tower.target is None or self.distance(tower, tower.target) - tower.target.radius > tower.reach:
+        if tower.target is None or dist(tower.x, tower.y, tower.target.x, tower.target.y) - tower.target.radius > tower.reach:
         # If tower does not have a target or old target is out of tower's range, select new one
             if tower.targeting == "close":
                 distance, target = 3000, None
                 for e in self.enemies:
-                    d = self.distance(tower, e)
+                    d = dist(tower.x, tower.y, e.x, e.y)
                     if d < distance and d - e.radius <= tower.reach:
                         distance = d
                         target = e
@@ -149,15 +149,13 @@ class Game:
             elif tower.targeting == "far":
                 distance, target = -1, None
                 for e in self.enemies:
-                    d = self.distance(tower, e)
+                    d = dist(tower.x, tower.y, e.x, e.y)
                     if d > distance and d - e.radius <= tower.reach:
                         distance = d
                         target = e
                 return target
         else:
             return tower.target
-    def distance(self, obj1, obj2):
-        return sqrt(pow(obj1.x - obj2.x, 2) + pow(obj1.y - obj2.y, 2))
     def generate_enemies(self):
         if self.wave == 1:
             self.enemies.extend([Enemy(1), Enemy(1), Enemy(1)])
@@ -319,7 +317,7 @@ class Game:
                             while index < self.spawn_rate and index < len(self.enemies):
                             # Spawn enemies in a set interval (not all at once)
                                 e = self.enemies[index]
-                                if e != t.target and self.distance(e, t.target) - e.radius < t.radius:
+                                if e != t.target and dist(e.x, e.y, t.target.x, t.target.y) - e.radius < t.radius:
                                     e.hp -= t.dmg
                                 index += 1
                 if t.target is None or t.target.is_defeated() or not t.target.visible:
