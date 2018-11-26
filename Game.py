@@ -36,7 +36,7 @@ class Game:
         self.castleHP = 500
         self.totalHP = 500
         self.wave_timer = Timer()
-        self.wave_interval = 40
+        self.wave_interval = 20
         self.spawn_timer = Timer()
         self.spawn_rate = 1
         self.spawn_interval = 700
@@ -208,7 +208,7 @@ class Game:
         # if not self.enemies:
         if self.enemies:
             self.wave += 1
-        self.wave_interval = 20
+        self.wave_interval = 10
         self.generate_enemies()
         self.wave_timer.reset()
         self.spawn_timer.start_timer()
@@ -239,7 +239,7 @@ class Game:
                     self.spawn_timer.reset()
                     self.spawn_rate = 1
                 elif self.wave_timer.time >= self.wave_interval * 1000:
-                    self.wave_interval = 20
+                    self.wave_interval = 10
                     self.generate_enemies()
                     self.wave_timer.reset()
                     self.spawn_timer.start_timer()
