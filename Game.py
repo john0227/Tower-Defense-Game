@@ -214,6 +214,39 @@ class Game:
         self.generate_enemies()
         self.wave_timer.reset()
         self.spawn_timer.start_timer()
+    def randomize_movement(self, r, c):
+        vx, vy = 0, 0
+        if (r >= 0 and r <= 9 and c >= 3 and c <= 6) or (r >= 6 and r <= 12 and c >= 23 and c <= 26):
+            # Going down
+            vx, vy = floor(random(-0.3, 1.5)), 1
+            if c == 3 or c == 23:
+                vx = 1
+            elif c == 6 or c == 26:
+                vx = -1
+        elif (r >= 10 and r <= 12 and c >= 4 and c <= 9) or (r >= 2 and r <= 5 and c >= 20 and c <= 26):
+            # Going down right
+            vx, vy = random(0.5, 1), floor(random(-0.5, 1.5))
+            if r == 11 and c == 4 or r == 12 and c == 5:
+                vy = 0
+            elif r == 12:
+                vx, vy = 0.5, -1
+            elif r == 10 or r == 2 or r == 3 and c == 25 or r == 4 and c == 26:
+                vx, vy = 0.5, 1
+            elif c == 26:
+                vx, vy = -1, 1
+            elif c == 25:
+                vx, vy = -0.5, 1
+        elif (r >= 9 and r <= 12 and c >= 10 and c <= 15) or (r >= 2 and r <= 5 and c >= 13 and c <= 19):
+            # Going up right
+            vx, vy = random(0.5, 1.5), -random(0, 1)
+        elif r >= 5 and r <= 9 and c >= 13 and c <= 16:
+            # Going up
+            vx, vy = floor(random(-0.5, 1.5)), -1
+            if c == 13:
+                vx = 1
+            elif c == 16:
+                vx = -1
+        return vx, vy
     def display(self):
         # Display Map
         for r in range(len(self.path)):
@@ -286,43 +319,11 @@ class Game:
                             self.highscore = self.score if self.score > self.highscore else self.highscore
                             self.enemies.pop(self.enemies.index(e))
                             del e
-                    elif e.visible:
+                    else:
                         r, c = self.at_rowcol(e.x, e.y)
-                        if (r >= 0 and r <= 9 and c >= 3 and c <= 6) or (r >= 6 and r <= 12 and c >= 23 and c <= 26):
-                            # Going down
-                            vx = floor(random(-0.3, 1.5))
-                            if c == 3 or c == 23:
-                                vx = 1
-                            elif c == 6 or c == 26:
-                                vx = -1
-                            e.move_and_display(vx, 1)
-                        elif (r >= 10 and r <= 12 and c >= 4 and c <= 9) or (r >= 2 and r <= 5 and c >= 20 and c <= 26):
-                            # Going down right
-                            vx, vy = random(0.5, 1), floor(random(-0.5, 1.5))
-                            if r == 11 and c == 4 or r == 12 and c == 5:
-                                vy = 0
-                            elif r == 12:
-                                vx, vy = 0.5, -1
-                            elif r == 10 or r == 2 or r == 3 and c == 25 or r == 4 and c == 26:
-                                vx, vy = 0.5, 1
-                            elif c == 26:
-                                vx, vy = -1, 1
-                            elif c == 25:
-                                vx, vy = -0.5, 1
-                            e.move_and_display(vx, vy)
-                        elif (r >= 9 and r <= 12 and c >= 10 and c <= 15) or (r >= 2 and r <= 5 and c >= 13 and c <= 19):
-                            # Going up right
-                            vx, vy = random(0.5, 1.5), -random(0, 1)
-                            e.move_and_display(vx, vy)
-                        elif r >= 5 and r <= 9 and c >= 13 and c <= 16:
-                            # Going up
-                            vx = floor(random(-0.5, 1.5))
-                            if c == 13:
-                                vx = 1
-                            elif c == 16:
-                                vx = -1
-                            e.move_and_display(vx, -1)
-                        elif r >= 13 and c >= 23 and c <= 26:
+                        vx, vy = self.randomize_movement(r, c)
+                        e.move_and_display(vx, vy)
+                        if self.path[r][c] == 3:
                             e.visible = False
                             self.castleHP -= e.radius
                             if self.castleHP <= 0:
