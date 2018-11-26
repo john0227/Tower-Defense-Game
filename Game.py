@@ -201,10 +201,9 @@ class Game:
         if self.wave % 20 == 0:
             # After every 20 waves, increase total number of enemies generated
             self.max_enemies += 10
-        if self.wave % 10 == 0 and self.wave >= 20:
+        if self.wave % 10 == 0:
             # After every 10 waves, increase enemy health
-            e_scale = 2 / (self.wave // 10)
-            Enemy.difficulty_scale += e_scale
+            Enemy.difficulty_scale += self.wave / 10
     def start_wave(self):
         # if not self.enemies:
         if self.enemies:
