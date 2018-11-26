@@ -341,8 +341,16 @@ class Game:
         self.display_scorebar()
         self.display_icons()
         if self.wave_timer.is_set:
-            fill(0, 0, 255)
-            rect(170, 220, (170 / self.wave_interval) * (self.wave_interval * 1000 - self.wave_timer.time) / 1000, 15)
+            noStroke()
+            fill(180)
+            triangle(227.5, 235, 272.5, 235, 250, 210)
+            ellipse(250, 255, 60, 60)
+            fill(0, 255, 0)
+            ellipse(250, 255, 50, 50)
+            fill(255, 0, 0)
+            arc(250, 255, 50, 50, -HALF_PI, -HALF_PI + TWO_PI * self.wave_timer.time / (self.wave_interval * 1000), PIE)
+            fill(190)
+            ellipse(250, 255, 35, 35)
     def display_always(self):
         # Display this when game should not be running
         for r in range(len(self.path)):
@@ -367,8 +375,14 @@ class Game:
         fill(0, 150, 0)
         rect(1175, 900, 150, 20)
         # Unmoving timer
-        fill(0, 0, 255)
-        rect(170, 220, 170, 15)
+        noStroke()
+        fill(180)
+        triangle(227.5, 235, 272.5, 235, 250, 210)
+        ellipse(250, 255, 60, 60)
+        fill(0, 255, 0)
+        ellipse(250, 255, 50, 50)
+        fill(190)
+        ellipse(250, 255, 35, 35)
     def display_scorebar(self):
         fill(204, 255, 255)
         rect(0, 0, 1500, 200)
