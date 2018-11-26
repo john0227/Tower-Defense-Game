@@ -45,7 +45,7 @@ class Tower:
         self.timer.reset()
         self.timer.start_timer()
     def upgrade(self):
-        self = self.__init__(self.name, self.level + 1, self.x, self.y)
+        self.__init__(self.name, self.level + 1, self.x, self.y)
     def show_info(self, x, y):
         # Change x, y position
         if y <= 475:
